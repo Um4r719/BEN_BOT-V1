@@ -3,15 +3,21 @@ const {
   default: makeWASocket,
   useMultiFileAuthState,
   DisconnectReason,
+  jidNormalizedUser,
+  getContentType,
   fetchLatestBaileysVersion,
   makeInMemoryStore,
   jidDecode,
   proto,
   getContentType,
   downloadContentFromMessage,
-  fetchLatestWaWebVersion
-} = require("@adiwajshing/baileys");
+  fetchLatestWaWebVersio 
+  Browsers,
+} = require("@whiskeysockets/baileys");
 const fs = require('fs');
+const l = console.log;
+const config = require('./config');
+const { File } = require('megajs');
 const pino = require("pino");
 const lolcatjs = require("lolcatjs");
 const path = require("path");
@@ -31,26 +37,54 @@ const {
   getBuffer
 } = require("./lib/myfunc");
 
-
-
-/*
 //===================SESSION-AUTH============================
 if (!fs.existsSync(__dirname + '/auth_info_baileys/creds.json')) {
-if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
-const sessdata = config.SESSION_ID
-const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
-filer.download((err, data) => {
-if(err) throw err
-fs.writeFile(__dirname + '/auth_info_baileys/creds.json', data, () => {
-console.log("SESSION DOWNLOADED COMPLETED ✅")
-})})}
+    if (!config.SESSION_ID) {
+        console.log('Please add your session to SESSION_ID env !!');
+        process.exit(1);
+    }
+    const sessdata = config.SESSION_ID;
+    const filer = File.fromURL(`https://mega.nz/file/${sessdata}`);
+    filer.download((err, data) => {
+        if (err) throw err;
+        fs.writeFile(__dirname + '/auth_info_baileys/creds.json', data, () => {
+            console.log('SESSION DOWNLOADED COMPLETED ✅');
+        });
+    });
+}
 
-const express = require("express");
-const app = express();
-const port = process.env.PORT || 9090;
-*/
+//=============================================
 
+async function connectToWA() {
+    console.log("CONNECTING BEN BOT...");
+    const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/');
+    const { version } = await fetchLatestBaileysVersion();
 
+    const conn = makeWASocket({
+        logger: P({ level: 'silent' }),
+        printQRInTerminal: false,
+        browser: Browsers.macOS('Firefox'),
+        syncFullHistory: true,
+        auth: state,
+        version,
+    });
+
+    conn.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update;
+        if (connection === 'close') {
+            if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+                connectToWA();
+            }
+        } else if (connection === 'open') {
+            console.log('BEN BOT CONNECTED SUCCESSFULLY ✅');
+            loadPlugins(conn);
+        }
+    });
+
+    conn.ev.on('creds.update', saveCreds);
+}
+
+connectToWA();
 
 const {
   imageToWebp,
