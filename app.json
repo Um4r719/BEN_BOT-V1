@@ -1,36 +1,26 @@
 {
-    "name": "BEN-BOT",
-    "description": "BEN BOT WHATSAPP BOT USING BAILEYS",
-    "logo": "https://github.com/Um4r719.png",
-    "keywords": ["bot"],
-    "success_url": "/",
-  
-      "stack": "container",
-    "env": {
-      "SESSION_ID": {
-        "description": "Put the session-id here.",
-        "required": true,
-        "value": ""
-      },  
-      
-      "ALIVE_IMG": {
-        "description": "paste your image url if you don't have you can use this public url.",
-        "required": false,
-        "value": ""
-      }, 
-    
-      "READ_MESSAGE": {
-        "description": "Make it true if you want bot read your all sms just now.",
-        "required": true,
-        "value": "false"
-      }
-  
-  },
-  
-       "buildpacks": [
-          {
-              "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
-          }
-       ],
-    "stack": "heroku-24"
+  "name": "UD MD",
+  "description": "UD MD BY UMAR REHMAN",
+  "logo": "https://telegra.ph/file/3ef5623a33997udujs.jpg",
+  "keywords": ["bot"],
+  "success_url": "/",
+
+  "env": {
+    "SESSION_ID": {
+      "description": "Put the session-id here.",
+      "required": true
+    },  
+
+    "MONGODB": {
+      "description": "paste your mongodb url.",
+      "required": true
+    }
+},
+
+     "buildpacks": [
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+        }
+     ],
+  "stack": "heroku-24"
 }
